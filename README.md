@@ -101,7 +101,7 @@ Note: To transfer data on high speed of CAN interface via UART dont forget to up
 Library uses Linux-like structure to store can frames;
 
 ```C++
-struct can_frame {
+ can_message_t {
     uint32_t can_id;  /* 32 bit CAN_ID + EFF/RTR/ERR flags */
     uint8_t  can_dlc;
     uint8_t  data[8];
@@ -113,8 +113,8 @@ For additional information see [SocketCAN](https://www.kernel.org/doc/Documentat
 ## Send Data
 
 ```C++
-MCP2515::ERROR sendMessage(const MCP2515::TXBn txbn, const struct can_frame *frame);
-MCP2515::ERROR sendMessage(const struct can_frame *frame);
+MCP2515::ERROR sendMessage(const MCP2515::TXBn txbn, const  can_message_t *frame);
+MCP2515::ERROR sendMessage(const  can_message_t *frame);
 ```
 
 This is a function to send data onto the bus.
@@ -122,7 +122,7 @@ This is a function to send data onto the bus.
 For example, In the 'send' example, we have:
 
 ```C++
-struct can_frame frame;
+ can_message_t frame;
 frame.can_id = 0x000;
 frame.can_dlc = 4;
 frame.data[0] = 0xFF;
@@ -136,7 +136,7 @@ mcp2515.sendMessage(&frame);
 ```
 
 ```C++
-struct can_frame frame;
+ can_message_t frame;
 frame.can_id = 0x12345678 | CAN_EFF_FLAG;
 frame.can_dlc = 2;
 frame.data[0] = 0xFF;
@@ -154,8 +154,8 @@ mcp2515.sendMessage(MCP2515::TXB1, &frame);
 The following function is used to receive data on the 'receive' node:
 
 ```C++
-MCP2515::ERROR readMessage(const MCP2515::RXBn rxbn, struct can_frame *frame);
-MCP2515::ERROR readMessage(struct can_frame *frame);
+MCP2515::ERROR readMessage(const MCP2515::RXBn rxbn,  can_message_t *frame);
+MCP2515::ERROR readMessage( can_message_t *frame);
 ```
 
 In conditions that masks and filters have been set. This function can only get frames that meet the requirements of masks and filters.
@@ -165,7 +165,7 @@ You can choise one of two method to receive: interrupt-based and polling
 Example of poll read
 
 ```C++
-struct can_frame frame;
+ can_message_t frame;
 
 void loop() {
     if (mcp2515.readMessage(&frame) == MCP2515::ERROR_OK) {
@@ -178,7 +178,7 @@ Example of interrupt based read
 
 ```C++
 bool interrupt = false;
-struct can_frame frame;
+ can_message_t frame;
 
 void irqHandler() {
     interrupt = true;
